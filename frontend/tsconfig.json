@@ -1,7 +1,9 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ES2022",
+    "lib": ["ES2015", "DOM", "DOM.Iterable"],
+    "types": ["cypress"]
+  },
+  "include": ["**/*.ts", "cypress/**/*.ts"]
 }

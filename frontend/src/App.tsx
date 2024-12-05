@@ -3,14 +3,16 @@ import { FileUpload } from './components/FileUpload';
 import { ScriptInput } from './components/ScriptInput';
 import { AudioPlayer } from './components/AudioPlayer';
 import { ImagePreview } from './components/ImagePreview';
-import { Mic } from 'lucide-react';
+import { Mic, Clock } from 'lucide-react';
 import { useVoiceGeneration } from './hooks/useVoiceGeneration';
+import { ErrorDisplay } from './components/ErrorDisplay';
 
 function App() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [script, setScript] = useState('');
-  const { audioUrl, isLoading, error, generate } = useVoiceGeneration();
+  const { audioUrl, isLoading, error, status, generate, errorStatus } = useVoiceGeneration();
+  const [generationStartTime, setGenerationStartTime] = useState<Date | null>(null);
 
   const handleImageSelect = (file: File) => {
     setSelectedImage(file);
@@ -21,7 +23,14 @@ function App() {
     if (!selectedImage || !script) {
       return;
     }
+    setGenerationStartTime(new Date());
     await generate(selectedImage, script);
+    setGenerationStartTime(null);
+  };
+
+  const getElapsedTime = () => {
+    if (!generationStartTime) return 0;
+    return Math.floor((new Date().getTime() - generationStartTime.getTime()) / 1000);
   };
 
   return (
@@ -50,12 +59,6 @@ function App() {
 
           <ScriptInput value={script} onChange={setScript} />
 
-          {error && (
-            <div className="p-4 bg-red-50 text-red-600 rounded-lg">
-              {error}
-            </div>
-          )}
-
           <button
             onClick={handleSubmit}
             disabled={isLoading || !selectedImage || !script}
@@ -63,7 +66,7 @@ function App() {
                      hover:bg-blue-600 transition-colors disabled:bg-gray-300
                      disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {isLoading ? (
+            {status === 'processing' ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Generating...
@@ -73,7 +76,44 @@ function App() {
             )}
           </button>
 
+          {status === 'processing' && (
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                <Clock className="w-5 h-5 text-blue-500 animate-pulse" />
+                <div>
+                  <p className="font-medium text-blue-700">
+                    Generating your voice...
+                  </p>
+                  <p className="text-sm text-blue-600">
+                    This might take a few minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {status === 'error' && error && (
+            <ErrorDisplay error={error} status={errorStatus} />
+          )}
+
           {audioUrl && <AudioPlayer audioUrl={audioUrl} />}
+
+          {isLoading && (
+            <div data-testid="generating-status" className="p-4 bg-blue-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                <Clock className="w-5 h-5 text-blue-500 animate-pulse" />
+                <div>
+                  <p className="font-medium text-blue-700">
+                    Generating your voice...
+                  </p>
+                  <p className="text-sm text-blue-600">
+                    Elapsed time: {getElapsedTime()} seconds
+                    {getElapsedTime() > 30 && " (This might take a few minutes)"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

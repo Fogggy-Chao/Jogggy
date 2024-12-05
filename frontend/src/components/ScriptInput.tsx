@@ -7,7 +7,10 @@ interface ScriptInputProps {
 
 export function ScriptInput({ value, onChange }: ScriptInputProps) {
   return (
-    <div className="w-full">
+    <div
+      data-testid="script-input"
+      className="w-full"
+    >
       <label htmlFor="script" className="block text-sm font-medium text-gray-700 mb-2">
         Enter your script
       </label>

@@ -27,6 +27,7 @@ export function FileUpload({ onImageSelect }: FileUploadProps) {
 
   return (
     <div
+      data-testid="file-upload"
       className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors"
       onDragOver={handleDragOver}
       onDrop={handleDrop}
