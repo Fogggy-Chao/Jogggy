@@ -75,7 +75,7 @@ export default function DisplayCard() {
                     <InputBox script={script} setScript={setScript} />
                   </div>
                   <div className="w-full flex gap-1 items-center justify-center p-0">
-                    <AudioPlayer audioBase64={result?.data}/>
+                    <AudioPlayer audioBase64={result?.data as string}/>
                   </div>
                 </div>
                 <div className="basis-2/6 flex gap-4 aspect-square">
