@@ -6,11 +6,12 @@ import { OpenAI } from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { analysisSchema, VoicePreviewsResponseModel } from "./definitions";
 import { ElevenLabsClient } from "elevenlabs";
+import { text } from "stream/consumers";
 
 //Define schema for the action
 const schema = z.object({
   base64Image: z.string(),
-  script: z.string().min(1)
+  script: z.string()
 }); 
 
 
@@ -92,7 +93,7 @@ export const generateVoice = actionClient
       //Generate voice previews from ElevenLabs
       const requestBody = {
         voice_description: analysis.textToVoicePrompt,
-        text: analysis.textToGenerate,
+        text: script.length > 100 ? script : analysis.textToGenerate,
       };
       console.info(
         "------------[Pick-a-Voice: ElevenLabs] Starting ElevenLabs API call------------");
