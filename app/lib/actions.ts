@@ -6,7 +6,6 @@ import { OpenAI } from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { analysisSchema, VoicePreviewsResponseModel } from "./definitions";
 import { ElevenLabsClient } from "elevenlabs";
-import { text } from "stream/consumers";
 
 //Define schema for the action
 const schema = z.object({
