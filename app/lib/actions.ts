@@ -20,7 +20,7 @@ const schema = z.object({
 async function imageAnalyzer(image: string) {
 
   const client = new OpenAI({ 
-    apiKey: env.OPEN_AI_API_KEY,
+    apiKey: process.env.OPEN_AI_API_KEY,
     timeout: 30000 
   });
 
@@ -99,7 +99,7 @@ export const generateVoice = actionClient
       console.info(
         "------------[Pick-a-Voice: ElevenLabs] Starting ElevenLabs API call------------");
       
-      const client = new ElevenLabsClient({ apiKey: env.ELEVENLABS_API_KEY });
+      const client = new ElevenLabsClient({ apiKey: process.env.ELEVENLABS_API_KEY });
       const voiceResponse = await client.textToVoice.createPreviews(requestBody);
 
       console.info('------------[Pick-a-Voice: ElevenLabs] Voice response generated successfully------------');
