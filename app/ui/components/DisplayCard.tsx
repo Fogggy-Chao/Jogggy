@@ -13,7 +13,7 @@ export default function DisplayCard() {
   const [image, setImage] = useState<File | null>(null);
   const [script, setScript] = useState<string>('');
 
-  const { execute, status, result } = useAction(generateVoice);
+  const { execute, result } = useAction(generateVoice);
 
   const handleGenerate = async () => {
     try {

@@ -2,7 +2,6 @@ import {
     DEFAULT_SERVER_ERROR_MESSAGE,
     createSafeActionClient,
   } from "next-safe-action";
-  import { headers } from "next/headers";
   
   export const actionClient = createSafeActionClient({
     handleServerError(e) {

@@ -1,8 +1,6 @@
 'use client';
 
-import { graphik } from "./ui/fonts/fonts";
-import { motion } from 'motion/react';
-import Image from 'next/image';
+
 import DisplayCard from './ui/components/DisplayCard';
 
 export default function Home() {
