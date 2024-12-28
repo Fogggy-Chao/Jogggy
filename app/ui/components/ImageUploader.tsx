@@ -8,7 +8,7 @@ interface ImageUploaderProps {
 }
 
 export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
-  const MAX_FILE_SIZE = 20 * 1024 * 1024; // 2MB in bytes
+  const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB in bytes
 
   const handleClick = () => {
     document.getElementById('fileInput')?.click();
@@ -26,15 +26,25 @@ export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
         className="hidden"
         onChange={(event) => setImage(event.target.files?.[0] ?? null)}
       />
-      <Image
-        src="/Image.svg"
-        alt="Upload icon"
-        width={48}
-        height={48}
-        className="mb-2"
-      />
+      {image ? (
+        <Image
+          src={URL.createObjectURL(image)}
+          alt="Uploaded image"
+          width={48}
+          height={48}
+          className="mb-2 object-cover rounded-lg"
+        />
+      ) : (
+        <Image
+          src="/Image.svg"
+          alt="Upload icon"
+          width={48}
+          height={48}
+          className="mb-2"
+        />
+      )}
       <div className="text-gray-600 font-medium text-lg text-center">
-        Upload your character image here
+        {image ? 'Change image' : 'Upload your character image here'}
       </div>
       <div className="text-gray-400 text-sm text-center">
         File &lt; {MAX_FILE_SIZE / (1024 * 1024)} MB
