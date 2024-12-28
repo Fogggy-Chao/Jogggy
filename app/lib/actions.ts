@@ -98,6 +98,9 @@ export const generateVoice = actionClient
         "------------[Pick-a-Voice: ElevenLabs] Starting ElevenLabs API call------------");
       
       const client = new ElevenLabsClient({ apiKey: process.env.ELEVENLABS_API_KEY });
+
+      console.log("Connected to ElevenLabs");
+      
       const voiceResponse = await client.textToVoice.createPreviews(requestBody);
 
       console.info('------------[Pick-a-Voice: ElevenLabs] Voice response generated successfully------------');
