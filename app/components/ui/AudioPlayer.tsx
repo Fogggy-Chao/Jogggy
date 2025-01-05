@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 export default function AudioPlayer({ audioBase64 }: { audioBase64: string }) {
   const [isPlaying, setIsPlaying] = useState(false);

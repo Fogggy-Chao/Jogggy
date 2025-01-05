@@ -10,7 +10,7 @@ interface InputBoxProps {
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputBoxProps>(
-  ({ className, placeholder, script, setScript, ...props }, ref) => {
+  ({ className, placeholder, script, setScript, ...props }) => {
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       setScript(event.target.value);
     };
