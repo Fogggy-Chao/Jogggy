@@ -16,7 +16,7 @@ export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
 
   return (
     <div
-      className="w-full h-auto bg-white/70 rounded-[40px] flex flex-col items-center justify-center cursor-pointer gap-2 p-8"
+      className="w-full h-auto bg-gray-50 rounded-[10px] flex flex-col items-center justify-center cursor-pointer gap-2 p-8"
       onClick={handleClick}
     >
       <input
@@ -44,7 +44,7 @@ export default function ImageUploader({ image, setImage }: ImageUploaderProps) {
         />
       )}
       <div className="text-gray-600 font-medium text-lg text-center">
-        {image ? 'Change image' : 'Upload your character image here'}
+        {image ? image.name : 'Click to Upload'}
       </div>
       <div className="text-gray-400 text-sm text-center">
         File &lt; {MAX_FILE_SIZE / (1024 * 1024)} MB

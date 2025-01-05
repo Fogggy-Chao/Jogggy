@@ -19,7 +19,7 @@ async function imageAnalyzer(image: string) {
 
   const client = new OpenAI({ 
     apiKey: process.env.OPEN_AI_API_KEY,
-    timeout: 30000 
+    timeout: 30000,
   });
 
   console.log("Connected to OpenAI");
@@ -109,17 +109,18 @@ export const generateVoice = actionClient
       
       if (!voiceRes.previews) {
         console.error("[Pick-a-Voice: ElevenLabs] ElevenLabs API error:", voiceRes);
-        throw new Error(`Failed to generate voice previews, please try again.`);
+        throw new Error(`Failed to generate voice, please try again.`);
       }
       
       return voiceRes.previews[0].audio_base_64;
 
     } catch (error) {
       console.error("Server Error:", error);
-      return {
-        data: {
-          failure: "Failed to generate voice"
-        }
-      };
+      throw error;
+      // return {
+      //   data: {
+      //     failure: "Failed to generate voice"
+      //   }
+      // };
     }
   });

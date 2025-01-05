@@ -1,6 +1,7 @@
 import type { Metadata } from 'next/dist/lib/metadata/types/metadata-interface';
-import { graphik } from "./ui/fonts/fonts";
+import { graphik } from "./components/fonts/fonts";
 import "./globals.css";
+import { Toaster } from "sonner"
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${graphik.variable}`}
       >
         {children}
+        <Toaster position="top-center" richColors/>
       </body>
     </html>
   );
