@@ -1,0 +1,7 @@
+## TODO
+- [ ] send user's inputs to vercel blob storage and neon database
+    - [ ] send user's inputs to vercel blob storage
+    - [ ] send user's inputs link to neon database
+- [ ] generation record to vercel blob storage and neon database
+    - [ ] send generation record to vercel blob storage
+    - [ ] send generation record to neon database

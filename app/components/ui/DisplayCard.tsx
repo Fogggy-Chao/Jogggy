@@ -4,7 +4,7 @@ import AudioPlayer from './AudioPlayer';
 import ImageUploader from './ImageUploader';
 import { useState, useEffect } from 'react';
 import { useAction } from 'next-safe-action/hooks';
-import { generateVoice } from '@/app/lib/actions';
+import { generateVoice, createGenerationRecord } from '@/app/lib/actions';
 import { toast } from "sonner"
 import {
   Card,
@@ -16,14 +16,19 @@ import { cn } from '@/app/lib/utils';
 import { Input } from '@/app/components/ui/InputBox';
 import { Button } from '@/app/components/ui/button';
 import { Loader2 } from "lucide-react";
+import { upload} from '@vercel/blob/client'
+import { type PutBlobResult } from '@vercel/blob'
 
 export default function DisplayCard({className}: {className?: string}) {
   
   // Use State to store the image and script 
   const [image, setImage] = useState<File | null>(null);
   const [script, setScript] = useState<string>('');
-
+  // Use State to store the blob
+  const [imageBlob, setImageBlob] = useState<PutBlobResult | null>(null);
+  const [scriptBlob, setScriptBlob] = useState<PutBlobResult | null>(null);
   const { execute, status, result } = useAction(generateVoice);
+  const { execute: dataExecute } = useAction(createGenerationRecord);
 
   const handleGenerate = async () => {
     try {
@@ -42,6 +47,34 @@ export default function DisplayCard({className}: {className?: string}) {
       const base64Image = imageBuffer.toString('base64');
       
       execute({base64Image, script});
+
+      // Send user's inputs to blob variables
+      const newImageBlob = await upload(`/jogggy/user_input/image/${image.name}`, image, {
+        access: 'public',
+        handleUploadUrl: '/api/upload',
+      });
+
+      const scriptBlob = new Blob([script], { type: 'text/plain' });
+      const newScriptBlob = await upload(
+      `/jogggy/user_input/script/script-${Date.now()}.txt`, // Unique filename
+      scriptBlob,
+      {
+        access: 'public',
+        handleUploadUrl: '/api/upload',
+      }
+    );
+
+      setImageBlob(newImageBlob);
+      setScriptBlob(newScriptBlob);
+
+      dataExecute({
+        // taskId: taskId,
+        imageBase64: newImageBlob.url,
+        script: script,
+        audioBase64: result?.data || null,
+        // createdAt: new Date(),
+        status: result?.data ? 'completed' : 'failed'
+      });
 
     } catch (error) {
       console.error('Failed to Generate Voice:', error);

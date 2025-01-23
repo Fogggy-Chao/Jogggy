@@ -4,8 +4,10 @@ import { z } from "zod";
 import { actionClient } from "./safe-action";
 import { OpenAI } from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
-import { analysisSchema, VoicePreviewsResponseModel } from "./definitions";
+import { analysisSchema, generationRecordSchema, updateGenerationRecordSchema, VoicePreviewsResponseModel } from "./definitions";
 import { ElevenLabsClient } from "elevenlabs";
+import { neon } from "@neondatabase/serverless";
+import { randomUUID } from "crypto";
 
 //Define schema for the action
 const schema = z.object({
@@ -13,8 +15,7 @@ const schema = z.object({
   script: z.string()
 }); 
 
-
-
+//Function to analyze the image
 async function imageAnalyzer(image: string) {
 
   const client = new OpenAI({ 
@@ -124,3 +125,63 @@ export const generateVoice = actionClient
       // };
     }
   });
+
+// Create a generation record in the database
+export const createGenerationRecord = actionClient
+.schema(updateGenerationRecordSchema)
+.action(async ({ parsedInput: { imageBase64, script, audioBase64, status } }) => {
+
+    if (!process.env.DATABASE_URL) {
+        throw new Error('DATABASE_URL is not defined');
+    }
+    
+    // Validate input data
+    const validatedData = updateGenerationRecordSchema.parse({
+        imageBase64,
+        script,
+        audioBase64,
+        status
+    });
+    
+    const taskId = randomUUID();
+
+    const sql = neon(process.env.DATABASE_URL);
+    
+    try {
+        // const data = await sql`
+        //     SELECT *
+        //     FROM jogggy.pick_a_voice.generation_record
+        // `;
+
+        const data = await sql`
+            INSERT INTO jogggy.pick_a_voice.generation_record (
+                taskid,
+                imagebase64,
+                script,
+                audiobase64,
+                createdat,
+                status
+            ) VALUES (
+                ${taskId},
+                ${validatedData.imageBase64},
+                ${validatedData.script},
+                ${validatedData.audioBase64},
+                NOW(),
+                ${validatedData.status}
+            )
+            RETURNING taskid
+        `;
+        
+        // Validate returned data
+        console.log(data);
+        return data[0];
+
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            console.error('Validation error:', error.errors);
+            throw new Error('Invalid data format');
+        }
+        console.error('Failed to create generation record:', error);
+        throw new Error('Failed to create generation record');
+    }
+});
